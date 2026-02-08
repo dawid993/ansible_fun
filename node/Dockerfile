@@ -8,7 +8,7 @@ ENV PUB_KEY=${PUB_KEY}
 RUN echo "PUB_KEY is: $PUB_KEY"
 
 # Install SSH server and sudo
-RUN apt-get update && apt-get install -y openssh-server sudo
+RUN apt-get update && apt-get install -y openssh-server sudo && apt-get install -y rsyslog
 
 # Create SSH directory
 RUN mkdir /var/run/sshd
@@ -34,6 +34,7 @@ RUN mkdir -p /home/ansible/.ssh && \
     chown -R ansible:ansible /home/ansible/.ssh && \
     chmod 700 /home/ansible/.ssh && \
     chmod 600 /home/ansible/.ssh/authorized_keys
+
 
 # Expose SSH port
 EXPOSE 22

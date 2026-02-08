@@ -1,0 +1,45 @@
+---
+- hosts: nodes
+  become: true
+  tasks:  
+    - name: Install apache
+      ansible.builtin.apt:
+        name: apache2
+    - name: Start apache
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: true
+    - name: Move index.html
+      ansible.builtin.copy:
+        src: index.html
+        dest: /var/www/html/index.html
+    - name: Install fail2ban
+      apt:
+        update_cache: true
+        name: fail2ban
+        state: present
+    - name: Configure jail.local
+      copy:
+        dest: /etc/fail2ban/jail.local
+        mode: "0644"
+        content: |
+          [sshd]
+          enabled = true
+          port = ssh
+          logpath = /var/log/auth.log
+          maxretry = 5
+          bantime = 10m
+          findtime = 10m
+          backend = auto
+    - name: Start fail2ban in background (no systemd)
+      shell: |
+        /etc/init.d/fail2ban start
+      args:
+        executable: /bin/bash
+    - name: Check fail2ban status
+      command: fail2ban-client status
+      register: f2b
+      changed_when: false
+    - debug:
+        var: f2b.stdout_lines

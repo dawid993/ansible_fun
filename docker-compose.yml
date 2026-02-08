@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  ansible:
+    build: ./ansible
+    container_name: ansible
+    networks: [lab]
+    working_dir: /work
+    volumes:
+      - ./ansible:/work:ro
+      - ./keys/id_rsa:/keys/id_rsa:ro
+
+  node1:
+    build: ./node
+    hostname: node1
+    networks: [lab]
+    volumes:
+      - ./keys/authorized_keys:/home/ansible/.ssh/authorized_keys:ro
+
+  node2:
+    build: ./node
+    hostname: node2
+    networks: [lab]
+    volumes:
+      - ./keys/authorized_keys:/home/ansible/.ssh/authorized_keys:ro
+
+  attack_node:
+    build: ./node
+    hostname: attacker
+    networks: [lab]      
+
+networks:
+  lab:
+    driver: bridge
