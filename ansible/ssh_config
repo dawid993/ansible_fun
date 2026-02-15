@@ -1,7 +1,3 @@
-Host node1
-  StrictHostKeyChecking no
-  UserKnownHostsFile /dev/null
-
-Host node2
+Host node1 node2
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
